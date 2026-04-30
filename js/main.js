@@ -1,4 +1,5 @@
-import { createPhotos } from './data.js';
 import { renderPictures } from './render-pictures.js';
+import { initBigPicturePreview } from './big-picture-preview.js';
 
-renderPictures(createPhotos);
+renderPictures();
+initBigPicturePreview();
