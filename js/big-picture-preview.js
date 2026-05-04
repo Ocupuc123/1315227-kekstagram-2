@@ -90,16 +90,9 @@ const openPicturePreview = (currentId) => {
   }
 
   document.addEventListener('keydown', onDocumentKeydown);
-  bigPictureCommentsLoader.addEventListener('click', onCommentsLoaderClick);
-  bigPictureCloseButton.addEventListener('click', onBigPictureCloseClick);
 };
 
-let isBigPictureInitialized = false;
-
 const initBigPicturePreview = () => {
-  if (isBigPictureInitialized) {
-    return;
-  }
 
   pictures.addEventListener('click', (evt) => {
     const targetPicture = evt.target.closest('.picture');
@@ -111,7 +104,8 @@ const initBigPicturePreview = () => {
     }
   });
 
-  isBigPictureInitialized = true;
+  bigPictureCommentsLoader.addEventListener('click', onCommentsLoaderClick);
+  bigPictureCloseButton.addEventListener('click', onBigPictureCloseClick);
 };
 
 function closePicturePreview() {
@@ -120,8 +114,6 @@ function closePicturePreview() {
   bigPicture.classList.add('hidden');
 
   document.removeEventListener('keydown', onDocumentKeydown);
-  bigPictureCloseButton.removeEventListener('click', onBigPictureCloseClick);
-  bigPictureCommentsLoader.removeEventListener('click', onCommentsLoaderClick);
 }
 
 export { initBigPicturePreview };
