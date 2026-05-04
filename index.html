@@ -7,8 +7,9 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <title>Кекстаграм</title>
-  <script src="js/functions.js"></script>
-  <script type="module" src="js/main.js" defer></script>
+  <script src="vendor/pristine/pristine.min.js" defer></script>
+  <script src="js/functions.js" defer></script>
+  <script src="js/main.js" type="module"></script>
 </head>
 
 <body>
@@ -32,7 +33,7 @@
       <section class="img-upload">
         <div class="img-upload__wrapper">
           <h2 class="img-upload__title  visually-hidden">Загрузка фотографии</h2>
-          <form class="img-upload__form" id="upload-select-image" autocomplete="off">
+          <form class="img-upload__form" id="upload-select-image" autocomplete="off" method="post" enctype="multipart/form-data" action="https://31.javascript.htmlacademy.pro/kekstagram">
 
             <!-- Изначальное состояние поля для загрузки изображения -->
             <fieldset class="img-upload__start">
