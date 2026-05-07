@@ -11,19 +11,6 @@ const checkStringIsPalindrome = (string = '') => {
   return reverseString === normalizeString;
 };
 
-const extractNumber = (string = '') => {
-  let stringWithNumbers = '';
-
-  for (let i = 0; i <= string.toString().length; i++) {
-    const number = parseInt(string.toString()[i], 10);
-    if (!Number.isNaN(number)) {
-      stringWithNumbers += number;
-    }
-  }
-
-  return Number(stringWithNumbers) ? Number(stringWithNumbers) : NaN;
-};
-
 const convertStringToMinutes = (time) => {
   const [hours, minutes] = time.split(':').map(Number);
   return hours * 60 + minutes;
