@@ -1,13 +1,19 @@
-import { isEscapeKey, extractNumber } from './util.js';
+import { isEscapeKey } from './util.js';
+import { validateFormReset } from './validate-form.js';
 
-const Scale = {
+const ScaleDirection = {
+  DECREASE: -1,
+  INCREASE: 1
+};
+
+const ScaleStep = {
   STEP: 25,
   MIN: 25,
   MAX: 100,
   DEFAULT: 100
 };
 
-const effectsConfig = {
+const effectConfig = {
   chrome: {
     property: 'grayscale',
     min: 0,
@@ -45,6 +51,7 @@ const effectsConfig = {
   },
 };
 
+const body = document.body;
 const uploadImage = document.querySelector('.img-upload');
 const uploadImageFileInput = uploadImage.querySelector('#upload-file');
 const uploadImageForm = uploadImage.querySelector('#upload-select-image');
@@ -61,8 +68,9 @@ const scaleControlInput = uploadImage.querySelector('[name="scale"]');
 
 let slider = null;
 let currentEffect = 'none';
+let currentScale = parseFloat(scaleControlInput.value);
 
-const applyFilterEffect = (effect, value) => `${effectsConfig[effect]?.property}(${parseFloat(value)}${effectsConfig[effect]?.unit})`;
+const applyFilterEffect = (effect, value) => `${effectConfig[effect]?.property}(${parseFloat(value)}${effectConfig[effect]?.unit})`;
 const applyTransformScale = (value) => `scale(${parseFloat(value) / 100})`;
 
 const onSliderUpdate = () => {
@@ -77,11 +85,11 @@ const onSliderUpdate = () => {
 const initEffectSlider = () => {
   const options = {
     connect: [true, false],
-    start: [effectsConfig[currentEffect].max],
-    step: effectsConfig[currentEffect].step,
+    start: [effectConfig[currentEffect].max],
+    step: effectConfig[currentEffect].step,
     range: {
-      'min': effectsConfig[currentEffect].min,
-      'max': effectsConfig[currentEffect].max
+      'min': effectConfig[currentEffect].min,
+      'max': effectConfig[currentEffect].max
     }
   };
 
@@ -90,7 +98,7 @@ const initEffectSlider = () => {
     slider.on('update', onSliderUpdate);
   } else {
     slider.updateOptions(options);
-    slider.set(effectsConfig[currentEffect].max);
+    slider.set(effectConfig[currentEffect].max);
   }
 };
 
@@ -107,18 +115,11 @@ const checkEffectSliderVisibility = (effect) => {
   }
 };
 
-const onScaleControlSmallerClick = () => {
-  const currentValue = extractNumber(scaleControlInput.value);
-  const newValue = Math.max((currentValue - Scale.STEP), Scale.MIN);
-  scaleControlInput.value = `${newValue}%`;
-  uploadImagePreview.style.transform = applyTransformScale(newValue);
-};
+const onScaleControlClick = (direction) => {
+  currentScale = Math.min(Math.max(currentScale + (direction * ScaleStep.STEP), ScaleStep.MIN), ScaleStep.MAX);
 
-const onScaleControlBiggerClick = () => {
-  const currentValue = extractNumber(scaleControlInput.value);
-  const newValue = Math.min((currentValue + Scale.STEP), Scale.MAX);
-  scaleControlInput.value = `${newValue}%`;
-  uploadImagePreview.style.transform = applyTransformScale(newValue);
+  scaleControlInput.value = `${currentScale}%`;
+  uploadImagePreview.style.transform = applyTransformScale(currentScale);
 };
 
 const onDocumentKeydown = (evt) => {
@@ -134,11 +135,10 @@ const onUploadImageCloseClick = () => {
 
 const clearUploadImageForm = () => {
   uploadImageFileInput.value = '';
-  uploadImagePreview.style.filter = '';
-  uploadImagePreview.style.transform = '';
-  scaleControlInput.value = `${Scale.DEFAULT}%`;
+  uploadImagePreview.style = '';
   uploadImageForm.reset();
   currentEffect = 'none';
+  currentScale = ScaleStep.DEFAULT;
 
   if (slider) {
     slider.destroy();
@@ -147,7 +147,7 @@ const clearUploadImageForm = () => {
 };
 
 const openUploadImage = () => {
-  document.body.classList.add('modal-open');
+  body.classList.add('modal-open');
   uploadImageOverlay.classList.remove('hidden');
   checkEffectSliderVisibility('none');
 
@@ -156,21 +156,23 @@ const openUploadImage = () => {
 
 const initUploadImage = () => {
   uploadImageFileInput.addEventListener('change', openUploadImage);
-  scaleControlSmaller.addEventListener('click', onScaleControlSmallerClick);
-  scaleControlBigger.addEventListener('click', onScaleControlBiggerClick);
+  scaleControlSmaller.addEventListener('click', () => {
+    onScaleControlClick(ScaleDirection.DECREASE);
+  });
+  scaleControlBigger.addEventListener('click', () => {
+    onScaleControlClick(ScaleDirection.INCREASE);
+  });
   uploadImageClose.addEventListener('click', onUploadImageCloseClick);
 
-  uploadImageEffects.addEventListener('click', (evt) => {
-    const targetEffect = evt.target.closest('.effects__radio');
-    if (targetEffect) {
-      checkEffectSliderVisibility(targetEffect.value);
-    }
+  uploadImageEffects.addEventListener('change', () => {
+    checkEffectSliderVisibility(uploadImageForm['effect'].value);
   });
 };
 
 function closeUploadImage() {
   clearUploadImageForm();
-  document.body.classList.remove('modal-open');
+  validateFormReset();
+  body.classList.remove('modal-open');
   uploadImageOverlay.classList.add('hidden');
 
   document.removeEventListener('keydown', onDocumentKeydown);

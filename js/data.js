@@ -32,32 +32,32 @@ const MESSAGES = [
   'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
 
-const CommentsRanges = {
+const CommentRange = {
   MIN: 0,
   MAX: 30
 };
 
-const AvatarRanges = {
+const AvatarRange = {
   MIN: 1,
   MAX: 6
 };
 
-const LikesRanges = {
+const LikeRange = {
   MIN: 15,
   MAX: 200
 };
 
-const MessagesRanges = {
+const MessageRange = {
   MIN: 1,
   MAX: 2
 };
 
-const getRandomLikes = () => getRandomInteger(LikesRanges.MIN, LikesRanges.MAX);
+const getRandomLikes = () => getRandomInteger(LikeRange.MIN, LikeRange.MAX);
 const getRandomDescription = () => getRandomArrayElement(DESCRIPTIONS);
-const getRandomAvatar = () => getRandomInteger(AvatarRanges.MIN, AvatarRanges.MAX);
+const getRandomAvatar = () => getRandomInteger(AvatarRange.MIN, AvatarRange.MAX);
 const getRandomName = () => getRandomArrayElement(NAMES);
 const getRandomMessage = () => {
-  const messageCount = getRandomInteger(MessagesRanges.MIN, MessagesRanges.MAX);
+  const messageCount = getRandomInteger(MessageRange.MIN, MessageRange.MAX);
 
   if (messageCount === 1) {
     return getRandomArrayElement(MESSAGES);
@@ -74,7 +74,7 @@ const createComment = (index) => ({
 });
 
 const getRandomComments = () => {
-  const count = getRandomInteger(CommentsRanges.MIN, CommentsRanges.MAX);
+  const count = getRandomInteger(CommentRange.MIN, CommentRange.MAX);
   return Array.from({ length: count }, (_, i) => createComment(i + 1));
 };
 
