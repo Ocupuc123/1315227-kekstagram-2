@@ -1,11 +1,9 @@
-import { photos } from './data.js';
+const pictures = document.querySelector('.pictures');
+const pictureFragment = document.querySelector('#picture').content;
+const pictureTemplate = pictureFragment.querySelector('.picture');
+const fragment = document.createDocumentFragment();
 
-const renderPictures = () => {
-  const pictures = document.querySelector('.pictures');
-  const pictureFragment = document.querySelector('#picture').content;
-  const pictureTemplate = pictureFragment.querySelector('.picture');
-  const fragment = document.createDocumentFragment();
-
+const renderPictures = (photos) => {
   photos.forEach(({ id, url, description, comments, likes }) => {
     const pictureTemplateClone = pictureTemplate.cloneNode(true);
     const pictureImage = pictureTemplateClone.querySelector('.picture__img');

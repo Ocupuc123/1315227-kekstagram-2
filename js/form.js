@@ -14,11 +14,11 @@ const ErrorMessage = {
   MAX_LENGTH_FOR_COMMENTS: `длина комментария больше ${COMMENTS_MAX_CHARACTERS} символов`
 };
 
-const uploadImageForm = document.querySelector('#upload-select-image');
-const hashtagsField = uploadImageForm.querySelector('[name="hashtags"]');
-const commentsField = uploadImageForm.querySelector('[name="description"]');
+const form = document.querySelector('#upload-select-image');
+const formHashtagsField = form.querySelector('[name="hashtags"]');
+const formCommentsField = form.querySelector('[name="description"]');
 
-const pristine = new Pristine(uploadImageForm, {
+const pristine = new Pristine(form, {
   classTo: 'img-upload__field-wrapper',
   errorTextClass: 'img-upload__field-wrapper--error',
   errorTextParent: 'img-upload__field-wrapper',
@@ -26,9 +26,9 @@ const pristine = new Pristine(uploadImageForm, {
 
 let lastErrorMessage = '';
 
+const regexp = /^#[a-zа-яё0-9]+$/i;
 const getHashtagsArray = (value) => value.trim().split(/\s+/).filter(Boolean);
 const isUniqueHashtags = (array) => array.every((item, index) => array.indexOf(item) === index);
-
 const validateComments = (value) => value.length <= COMMENTS_MAX_CHARACTERS;
 
 const validateHashtags = (value) => {
@@ -66,8 +66,6 @@ const validateHashtags = (value) => {
       return false;
     }
 
-    const regexp = /^#[a-zа-яё0-9]+$/i;
-
     if (!regexp.test(hashtag)) {
       lastErrorMessage = ErrorMessage.INVALID_PATTERN_FOR_HASHTAGS;
       return false;
@@ -79,28 +77,30 @@ const validateHashtags = (value) => {
 
 const getHashtagsErrorMessage = () => lastErrorMessage;
 
-const onEscapeKeydown = (evt) => {
+const onFieldKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.stopPropagation();
   }
 };
 
-const validateForm = () => {
-  hashtagsField.addEventListener('keydown', onEscapeKeydown);
-  commentsField.addEventListener('keydown', onEscapeKeydown);
+const setUploadFormSubmit = (onSubmit) => {
+  formHashtagsField.addEventListener('keydown', onFieldKeydown);
+  formCommentsField.addEventListener('keydown', onFieldKeydown);
 
-  pristine.addValidator(hashtagsField, validateHashtags, getHashtagsErrorMessage);
-  pristine.addValidator(commentsField, validateComments, ErrorMessage.MAX_LENGTH_FOR_COMMENTS);
+  pristine.addValidator(formHashtagsField, validateHashtags, getHashtagsErrorMessage);
+  pristine.addValidator(formCommentsField, validateComments, ErrorMessage.MAX_LENGTH_FOR_COMMENTS);
 
-  uploadImageForm.addEventListener('submit', (evt) => {
+  form.addEventListener('submit', (evt) => {
+    evt.preventDefault();
     const isValid = pristine.validate();
 
-    if (!isValid) {
-      evt.preventDefault();
+    if (isValid) {
+      const data = new FormData(evt.target);
+      onSubmit(data);
     }
   });
 };
 
-const validateFormReset = () => pristine.reset();
+const validateReset = () => pristine.reset();
 
-export { validateForm, validateFormReset };
+export { setUploadFormSubmit, validateReset };
