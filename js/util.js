@@ -1,4 +1,5 @@
 const ALERT_SHOW_TIME = 5000;
+const DEFAULT_DELAY = 500;
 
 const dataErrorFragment = document.querySelector('#data-error').content;
 const dataErrorTemplate = dataErrorFragment.querySelector('.data-error');
@@ -16,15 +17,28 @@ const showDataErrorAlert = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-const getRandomInteger = (a, b) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-  const result = Math.random() * (upper - lower + 1) + lower;
-  return Math.floor(result);
-};
-
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
+function debounce(callback, timeoutDelay = DEFAULT_DELAY) {
+  let timeoutId;
 
-export { getRandomInteger, getRandomArrayElement, isEscapeKey, showDataErrorAlert };
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+}
+
+function throttle(callback, delayBetweenFrames = DEFAULT_DELAY) {
+  let lastTime = 0;
+
+  return (...rest) => {
+    const now = new Date();
+
+    if (now - lastTime >= delayBetweenFrames) {
+      callback.apply(this, rest);
+      lastTime = now;
+    }
+  };
+}
+
+export { isEscapeKey, showDataErrorAlert, debounce, throttle };

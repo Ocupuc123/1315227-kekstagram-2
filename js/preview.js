@@ -88,7 +88,7 @@ const openPreview = (currentId, allPhotos) => {
   document.addEventListener('keydown', onPreviewKeydown);
 };
 
-const initPreview = (allPhotos) => {
+const setPreview = (allPhotos) => {
 
   pictures.addEventListener('click', (evt) => {
     const targetPicture = evt.target.closest('.picture');
@@ -112,4 +112,4 @@ function closePreview() {
   document.removeEventListener('keydown', onPreviewKeydown);
 }
 
-export { initPreview };
+export { setPreview };

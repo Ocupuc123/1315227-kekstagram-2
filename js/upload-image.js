@@ -54,6 +54,7 @@ const effectConfig = {
 
 const body = document.body;
 const upload = document.querySelector('.img-upload');
+const uploadSubmitButton = upload.querySelector('#upload-submit');
 const uploadFile = upload.querySelector('#upload-file');
 const uploadForm = upload.querySelector('#upload-select-image');
 const uploadOverlay = upload.querySelector('.img-upload__overlay');
@@ -105,10 +106,17 @@ const showAlert = (type) => {
   body.appendChild(alert);
 };
 
-
 const applyFilterEffect = (effect, value) => `${effectConfig[effect]?.property}(${parseFloat(value)}${effectConfig[effect]?.unit})`;
 
 const applyTransformScale = (value) => `scale(${parseFloat(value) / 100})`;
+
+const blockSubmitButton = () => {
+  uploadSubmitButton.disabled = true;
+};
+
+const unblockSubmitButton = () => {
+  uploadSubmitButton.disabled = false;
+};
 
 const onScaleControlClick = (direction) => {
   currentScale = Math.min(Math.max(currentScale + (direction * ScaleStep.STEP), ScaleStep.MIN), ScaleStep.MAX);
@@ -133,6 +141,8 @@ const onUploadCloseClick = () => {
 };
 
 const onFormSubmit = async (data) => {
+  blockSubmitButton();
+
   try {
     const request = await sendData(data);
 
@@ -143,6 +153,8 @@ const onFormSubmit = async (data) => {
   } catch {
     showAlert('error');
   }
+
+  unblockSubmitButton();
 };
 
 const onSliderUpdate = () => {
@@ -208,7 +220,7 @@ const openUpload = () => {
   document.addEventListener('keydown', onUploadKeydown);
 };
 
-const initUpload = () => {
+const setUpload = () => {
   uploadFile.addEventListener('change', openUpload);
 
   uploadScaleControlSmaller.addEventListener('click', () => {
@@ -234,4 +246,4 @@ function closeUpload() {
   document.removeEventListener('keydown', onUploadKeydown);
 }
 
-export { initUpload, onFormSubmit };
+export { setUpload, onFormSubmit };
