@@ -43,7 +43,7 @@ const setFilter = (cb, photos) => {
     cb(sortedPhotos);
   };
 
-  const debouncedRender = debounce(updateFilter, RENDER_DEBOUNCE);
+  const debouncedUpdateFilter = debounce(updateFilter, RENDER_DEBOUNCE);
 
   filtersForm.addEventListener('click', (evt) => {
     const currentButton = evt.target.closest('.img-filters__button');
@@ -59,7 +59,7 @@ const setFilter = (cb, photos) => {
     currentButton.classList.add('img-filters__button--active');
     const currentFilterType = currentButton.id;
 
-    debouncedRender(currentFilterType);
+    debouncedUpdateFilter(currentFilterType);
   });
 };
 
