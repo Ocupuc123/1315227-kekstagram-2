@@ -54,6 +54,7 @@ const effectConfig = {
 
 const body = document.body;
 const upload = document.querySelector('.img-upload');
+const uploadSubmitButton = upload.querySelector('#upload-submit');
 const uploadFile = upload.querySelector('#upload-file');
 const uploadForm = upload.querySelector('#upload-select-image');
 const uploadOverlay = upload.querySelector('.img-upload__overlay');
@@ -76,39 +77,42 @@ const showAlert = (type) => {
   const alert = fragment.querySelector(`.${type}`).cloneNode(true);
   const alertCloseButton = alert.querySelector(`.${type}__button`);
 
-  const onAlertKeydown = (evt) => {
+  const onDocumentKeydown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       closeAlert();
     }
   };
 
-  const onAlertOutsideClick = (evt) => {
+  const onDocumentClick = (evt) => {
     if (!evt.target.closest(`.${type}__inner`)) {
       closeAlert();
     }
   };
 
-  const onAlertCloseClick = () => {
+  const onAlertCloseButtonClick = () => {
     closeAlert();
   };
 
   function closeAlert() {
     alert.remove();
-    document.removeEventListener('keydown', onAlertKeydown);
-    document.removeEventListener('click', onAlertOutsideClick);
+    document.removeEventListener('keydown', onDocumentKeydown);
+    document.removeEventListener('click', onDocumentClick);
   }
 
-  alertCloseButton.addEventListener('click', onAlertCloseClick);
-  document.addEventListener('keydown', onAlertKeydown);
-  document.addEventListener('click', onAlertOutsideClick);
+  alertCloseButton.addEventListener('click', onAlertCloseButtonClick);
+  document.addEventListener('keydown', onDocumentKeydown);
+  document.addEventListener('click', onDocumentClick);
   body.appendChild(alert);
 };
-
 
 const applyFilterEffect = (effect, value) => `${effectConfig[effect]?.property}(${parseFloat(value)}${effectConfig[effect]?.unit})`;
 
 const applyTransformScale = (value) => `scale(${parseFloat(value) / 100})`;
+
+const toggleSubmitButton = (isDisabled) => {
+  uploadSubmitButton.disabled = isDisabled;
+};
 
 const onScaleControlClick = (direction) => {
   currentScale = Math.min(Math.max(currentScale + (direction * ScaleStep.STEP), ScaleStep.MIN), ScaleStep.MAX);
@@ -117,7 +121,7 @@ const onScaleControlClick = (direction) => {
   uploadPreview.style.transform = applyTransformScale(currentScale);
 };
 
-const onUploadKeydown = (evt) => {
+const onDocumentKeydownUpload = (evt) => {
   if (document.querySelector('.success') || document.querySelector('.error')) {
     return;
   }
@@ -128,11 +132,13 @@ const onUploadKeydown = (evt) => {
   }
 };
 
-const onUploadCloseClick = () => {
+const onUploadCloseButtonClick = () => {
   closeUpload();
 };
 
 const onFormSubmit = async (data) => {
+  toggleSubmitButton(true);
+
   try {
     const request = await sendData(data);
 
@@ -143,6 +149,8 @@ const onFormSubmit = async (data) => {
   } catch {
     showAlert('error');
   }
+
+  toggleSubmitButton(false);
 };
 
 const onSliderUpdate = () => {
@@ -188,7 +196,6 @@ const checkEffectSliderVisibility = (effect) => {
 };
 
 const clearForm = () => {
-  uploadFile.value = '';
   uploadPreview.style = '';
   uploadForm.reset();
   currentEffect = 'none';
@@ -205,10 +212,10 @@ const openUpload = () => {
   uploadOverlay.classList.remove('hidden');
   checkEffectSliderVisibility('none');
 
-  document.addEventListener('keydown', onUploadKeydown);
+  document.addEventListener('keydown', onDocumentKeydownUpload);
 };
 
-const initUpload = () => {
+const setUpload = () => {
   uploadFile.addEventListener('change', openUpload);
 
   uploadScaleControlSmaller.addEventListener('click', () => {
@@ -219,7 +226,7 @@ const initUpload = () => {
     onScaleControlClick(ScaleDirection.INCREASE);
   });
 
-  uploadCloseButton.addEventListener('click', onUploadCloseClick);
+  uploadCloseButton.addEventListener('click', onUploadCloseButtonClick);
   uploadEffects.addEventListener('change', () => {
     checkEffectSliderVisibility(uploadForm['effect'].value);
   });
@@ -231,7 +238,7 @@ function closeUpload() {
   body.classList.remove('modal-open');
   uploadOverlay.classList.add('hidden');
 
-  document.removeEventListener('keydown', onUploadKeydown);
+  document.removeEventListener('keydown', onDocumentKeydownUpload);
 }
 
-export { initUpload, onFormSubmit };
+export { setUpload, onFormSubmit };

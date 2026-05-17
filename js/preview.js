@@ -13,6 +13,7 @@ const previewLikes = preview.querySelector('.likes-count');
 const previewComments = preview.querySelector('.social__comments');
 const previewCommentsLoader = preview.querySelector('.social__comments-loader');
 const previewCommentShownCount = preview.querySelector('.social__comment-shown-count');
+const previewCommentAddField = preview.querySelector('.social__footer-text');
 const previewCommentTotalCount = preview.querySelector('.social__comment-total-count');
 const previewCloseButton = preview.querySelector('.big-picture__cancel');
 
@@ -44,16 +45,22 @@ const renderCommentsStep = () => {
   }
 };
 
+const onCommentAddFieldKeydown = (evt) => {
+  if (isEscapeKey(evt)) {
+    evt.stopPropagation();
+  }
+};
+
 const onCommentsLoaderClick = (evt) => {
   evt.preventDefault();
   renderCommentsStep();
 };
 
-const onPreviewCloseClick = () => {
+const onPreviewCloseButtonClick = () => {
   closePreview();
 };
 
-const onPreviewKeydown = (evt) => {
+const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
     closePreview();
@@ -85,10 +92,10 @@ const openPreview = (currentId, allPhotos) => {
 
   previewCommentsLoader.classList.toggle('hidden', comments.length <= COMMENTS_COUNT_STEP);
 
-  document.addEventListener('keydown', onPreviewKeydown);
+  document.addEventListener('keydown', onDocumentKeydown);
 };
 
-const initPreview = (allPhotos) => {
+const setPreview = (allPhotos) => {
 
   pictures.addEventListener('click', (evt) => {
     const targetPicture = evt.target.closest('.picture');
@@ -101,15 +108,17 @@ const initPreview = (allPhotos) => {
   });
 
   previewCommentsLoader.addEventListener('click', onCommentsLoaderClick);
-  previewCloseButton.addEventListener('click', onPreviewCloseClick);
+  previewCloseButton.addEventListener('click', onPreviewCloseButtonClick);
+  previewCommentAddField.addEventListener('keydown', onCommentAddFieldKeydown);
 };
 
 function closePreview() {
   body.classList.remove('modal-open');
   previewCommentsLoader.classList.remove('hidden');
   preview.classList.add('hidden');
+  previewCommentAddField.value = '';
 
-  document.removeEventListener('keydown', onPreviewKeydown);
+  document.removeEventListener('keydown', onDocumentKeydown);
 }
 
-export { initPreview };
+export { setPreview };

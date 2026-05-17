@@ -77,15 +77,21 @@ const validateHashtags = (value) => {
 
 const getHashtagsErrorMessage = () => lastErrorMessage;
 
-const onFieldKeydown = (evt) => {
+const onHashtagFieldKeydown = (evt) => {
+  if (isEscapeKey(evt)) {
+    evt.stopPropagation();
+  }
+};
+
+const onCommentFieldKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.stopPropagation();
   }
 };
 
 const setUploadFormSubmit = (onSubmit) => {
-  formHashtagsField.addEventListener('keydown', onFieldKeydown);
-  formCommentsField.addEventListener('keydown', onFieldKeydown);
+  formHashtagsField.addEventListener('keydown', onHashtagFieldKeydown);
+  formCommentsField.addEventListener('keydown', onCommentFieldKeydown);
 
   pristine.addValidator(formHashtagsField, validateHashtags, getHashtagsErrorMessage);
   pristine.addValidator(formCommentsField, validateComments, ErrorMessage.MAX_LENGTH_FOR_COMMENTS);
