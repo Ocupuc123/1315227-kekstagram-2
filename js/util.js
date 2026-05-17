@@ -1,12 +1,12 @@
 const ALERT_SHOW_TIME = 5000;
 const DEFAULT_DELAY = 500;
 
-const dataErrorFragment = document.querySelector('#data-error').content;
-const dataErrorTemplate = dataErrorFragment.querySelector('.data-error');
+const errorFragment = document.querySelector('#data-error').content;
+const errorTemplate = errorFragment.querySelector('.data-error');
 const body = document.body;
 
-const showDataErrorAlert = (message) => {
-  const alert = dataErrorTemplate.cloneNode(true);
+const showErrorAlert = (message) => {
+  const alert = errorTemplate.cloneNode(true);
   const title = alert.querySelector('.data-error__title');
 
   title.textContent = message;
@@ -28,4 +28,4 @@ function debounce(callback, timeoutDelay = DEFAULT_DELAY) {
   };
 }
 
-export { isEscapeKey, showDataErrorAlert, debounce };
+export { isEscapeKey, showErrorAlert, debounce };
