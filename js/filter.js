@@ -8,7 +8,7 @@ const filterButtons = filters.querySelectorAll('.img-filters__button');
 
 const FilterType = {
   RANDOM: 'filter-random',
-  DISCUSSED: 'filter-discussed',
+  DISCUSSED: 'filter-discussed'
 };
 
 const filterRandom = (photos) => {
@@ -38,7 +38,12 @@ const sortPhotos = (photos, filterType) => {
 const setFilter = (cb, photos) => {
   filters.classList.remove('img-filters--inactive');
 
-  const debouncedRender = debounce(cb, RENDER_DEBOUNCE);
+  const updateFilter = (filterType) => {
+    const sortedPhotos = sortPhotos(photos, filterType);
+    cb(sortedPhotos);
+  };
+
+  const debouncedRender = debounce(updateFilter, RENDER_DEBOUNCE);
 
   filtersForm.addEventListener('click', (evt) => {
     const currentButton = evt.target.closest('.img-filters__button');
@@ -52,10 +57,9 @@ const setFilter = (cb, photos) => {
     });
 
     currentButton.classList.add('img-filters__button--active');
-    const currentId = currentButton.id;
-    const sortedPhotos = sortPhotos(photos, currentId);
+    const currentFilterType = currentButton.id;
 
-    debouncedRender(sortedPhotos);
+    debouncedRender(currentFilterType);
   });
 };
 

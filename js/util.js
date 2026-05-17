@@ -28,17 +28,4 @@ function debounce(callback, timeoutDelay = DEFAULT_DELAY) {
   };
 }
 
-function throttle(callback, delayBetweenFrames = DEFAULT_DELAY) {
-  let lastTime = 0;
-
-  return (...rest) => {
-    const now = new Date();
-
-    if (now - lastTime >= delayBetweenFrames) {
-      callback.apply(this, rest);
-      lastTime = now;
-    }
-  };
-}
-
-export { isEscapeKey, showDataErrorAlert, debounce, throttle };
+export { isEscapeKey, showDataErrorAlert, debounce };
