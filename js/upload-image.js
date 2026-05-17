@@ -2,6 +2,8 @@ import { isEscapeKey } from './util.js';
 import { validateReset } from './form.js';
 import { sendData } from './api.js';
 
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+
 const ScaleDirection = {
   DECREASE: -1,
   INCREASE: 1
@@ -62,6 +64,7 @@ const uploadCloseButton = upload.querySelector('#upload-cancel');
 const uploadPreview = upload.querySelector('.img-upload__preview img');
 const uploadEffectLevel = upload.querySelector('.img-upload__effect-level');
 const uploadEffects = upload.querySelector('.img-upload__effects');
+const uploadEffectsPreviews = upload.querySelectorAll('.effects__preview');
 const uploadEffectValue = upload.querySelector('[name="effect-level"]');
 const uploadEffectSlider = upload.querySelector('.effect-level__slider');
 const uploadScaleControlSmaller = upload.querySelector('.scale__control--smaller');
@@ -208,6 +211,21 @@ const clearForm = () => {
 };
 
 const openUpload = () => {
+  const currentFile = uploadFile.files[0];
+  const currentFileName = currentFile.name.toLowerCase();
+
+  const matches = FILE_TYPES.some((it) => currentFileName.endsWith(it));
+
+  if (matches) {
+    const urlFile = URL.createObjectURL(currentFile);
+
+    uploadPreview.src = urlFile;
+
+    uploadEffectsPreviews.forEach((preview) => {
+      preview.style.backgroundImage = `url(${urlFile})`;
+    });
+  }
+
   body.classList.add('modal-open');
   uploadOverlay.classList.remove('hidden');
   checkEffectSliderVisibility('none');
