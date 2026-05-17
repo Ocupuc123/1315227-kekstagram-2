@@ -1,4 +1,4 @@
-import { isEscapeKey } from './util.js';
+import { isEscapeKey, showErrorAlert } from './util.js';
 import { validateReset } from './form.js';
 import { sendData } from './api.js';
 
@@ -224,13 +224,15 @@ const openUpload = () => {
     uploadEffectsPreviews.forEach((preview) => {
       preview.style.backgroundImage = `url(${urlFile})`;
     });
+
+    body.classList.add('modal-open');
+    uploadOverlay.classList.remove('hidden');
+    checkEffectSliderVisibility('none');
+
+    document.addEventListener('keydown', onDocumentKeydownUpload);
+  } else {
+    showErrorAlert('Неверный тип файла');
   }
-
-  body.classList.add('modal-open');
-  uploadOverlay.classList.remove('hidden');
-  checkEffectSliderVisibility('none');
-
-  document.addEventListener('keydown', onDocumentKeydownUpload);
 };
 
 const setUpload = () => {
