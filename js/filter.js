@@ -39,14 +39,14 @@ const sortPhotos = (photos, filterType) => {
 const setFilter = (cb, photos) => {
   filters.classList.remove('img-filters--inactive');
 
-  let currentFilterType = FilterType.DEFAULT;
+  let currentAppliedFilterType = FilterType.DEFAULT;
 
   const updateFilter = (filterType) => {
-    if (filterType === currentFilterType) {
+    if (filterType === currentAppliedFilterType) {
       return;
     }
 
-    currentFilterType = filterType;
+    currentAppliedFilterType = filterType;
     const sortedPhotos = sortPhotos(photos, filterType);
     cb(sortedPhotos);
   };
