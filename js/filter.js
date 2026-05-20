@@ -8,7 +8,8 @@ const filterButtons = filters.querySelectorAll('.img-filters__button');
 
 const FilterType = {
   RANDOM: 'filter-random',
-  DISCUSSED: 'filter-discussed'
+  DISCUSSED: 'filter-discussed',
+  DEFAULT: 'filter-default'
 };
 
 const filterRandom = (photos) => {
@@ -38,7 +39,14 @@ const sortPhotos = (photos, filterType) => {
 const setFilter = (cb, photos) => {
   filters.classList.remove('img-filters--inactive');
 
+  let currentFilterType = FilterType.DEFAULT;
+
   const updateFilter = (filterType) => {
+    if (filterType === currentFilterType) {
+      return;
+    }
+
+    currentFilterType = filterType;
     const sortedPhotos = sortPhotos(photos, filterType);
     cb(sortedPhotos);
   };
