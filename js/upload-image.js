@@ -1,4 +1,4 @@
-import { isEscapeKey, showErrorAlert } from './util.js';
+import { isEscapeKey, showErrorAlert, showPopupMessage } from './util.js';
 import { validateReset } from './form.js';
 import { sendData } from './api.js';
 
@@ -75,40 +75,6 @@ let slider = null;
 let currentEffect = 'none';
 let currentScale = parseFloat(uploadScaleControlInput.value);
 
-const showAlert = (type) => {
-  const fragment = document.querySelector(`#${type}`).content;
-  const alert = fragment.querySelector(`.${type}`).cloneNode(true);
-  const alertCloseButton = alert.querySelector(`.${type}__button`);
-
-  const onDocumentKeydown = (evt) => {
-    if (isEscapeKey(evt)) {
-      evt.preventDefault();
-      closeAlert();
-    }
-  };
-
-  const onDocumentClick = (evt) => {
-    if (!evt.target.closest(`.${type}__inner`)) {
-      closeAlert();
-    }
-  };
-
-  const onAlertCloseButtonClick = () => {
-    closeAlert();
-  };
-
-  function closeAlert() {
-    alert.remove();
-    document.removeEventListener('keydown', onDocumentKeydown);
-    document.removeEventListener('click', onDocumentClick);
-  }
-
-  alertCloseButton.addEventListener('click', onAlertCloseButtonClick);
-  document.addEventListener('keydown', onDocumentKeydown);
-  document.addEventListener('click', onDocumentClick);
-  body.appendChild(alert);
-};
-
 const applyFilterEffect = (effect, value) => `${effectConfig[effect]?.property}(${parseFloat(value)}${effectConfig[effect]?.unit})`;
 
 const applyTransformScale = (value) => `scale(${parseFloat(value) / 100})`;
@@ -124,11 +90,7 @@ const onScaleControlClick = (direction) => {
   uploadPreview.style.transform = applyTransformScale(currentScale);
 };
 
-const onDocumentKeydownUpload = (evt) => {
-  if (document.querySelector('.success') || document.querySelector('.error')) {
-    return;
-  }
-
+const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
     closeUpload();
@@ -147,10 +109,10 @@ const onFormSubmit = async (data) => {
 
     if (request) {
       closeUpload();
-      showAlert('success');
+      showPopupMessage('success');
     }
   } catch {
-    showAlert('error');
+    showPopupMessage('error');
   }
 
   toggleSubmitButton(false);
@@ -229,7 +191,7 @@ const openUpload = () => {
     uploadOverlay.classList.remove('hidden');
     checkEffectSliderVisibility('none');
 
-    document.addEventListener('keydown', onDocumentKeydownUpload);
+    document.addEventListener('keydown', onDocumentKeydown);
   } else {
     showErrorAlert('Неверный тип файла');
   }
@@ -258,7 +220,7 @@ function closeUpload() {
   body.classList.remove('modal-open');
   uploadOverlay.classList.add('hidden');
 
-  document.removeEventListener('keydown', onDocumentKeydownUpload);
+  document.removeEventListener('keydown', onDocumentKeydown);
 }
 
 export { setUpload, onFormSubmit };
