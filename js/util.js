@@ -5,6 +5,8 @@ const errorFragment = document.querySelector('#data-error').content;
 const errorTemplate = errorFragment.querySelector('.data-error');
 const body = document.body;
 
+let currentPopup = null;
+
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
 const showErrorAlert = (message) => {
@@ -20,6 +22,10 @@ const showErrorAlert = (message) => {
 };
 
 const showPopupMessage = (type) => {
+  if (currentPopup) {
+    return;
+  }
+
   const fragment = document.querySelector(`#${type}`).content;
   const popup = fragment.querySelector(`.${type}`).cloneNode(true);
   const popupCloseButton = popup.querySelector(`.${type}__button`);
@@ -42,15 +48,22 @@ const showPopupMessage = (type) => {
   };
 
   function closePopup() {
+    if (!currentPopup) {
+      return;
+    }
+
     popup.remove();
     document.removeEventListener('click', onDocumentClick);
     document.removeEventListener('keydown', onDocumentKeydown);
+    currentPopup = null;
   }
 
   popupCloseButton.addEventListener('click', onPopupCloseButtonClick);
   document.addEventListener('click', onDocumentClick);
   document.addEventListener('keydown', onDocumentKeydown);
   body.appendChild(popup);
+
+  currentPopup = popup;
 };
 
 const debounce = (callback, timeoutDelay = DEFAULT_DELAY) => {
