@@ -93,6 +93,11 @@ const onScaleControlClick = (direction) => {
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
+
+    if (document.querySelector('.error')) {
+      return;
+    }
+
     closeUpload();
   }
 };
